@@ -21,13 +21,12 @@ This is a Unity template project to allow the easy creation of FitzWorld environ
   1. Add an empty GameObject, call it BackDockingPoint. It should be on the back end of the track, (where the boat comes from, Z=0.0, Y=0.0)
   1. Add an invisible collision cube to the end of the part (this is where the boat collides and new parts are generated)
     1. Add script component CollNotifierTrackpart to the collision cube
-    1. Configure the WorldManager as TrackManager
   1. Optional: Add a TextMesh to display a distance marker
 1. Create an empty GameObject, call it GoalType
   1. TODO
 1. Create an empty GameObject, call it StatDisplay
   1. TODO
-1. Create empty GameObjects as Child for WorldManager. These will be our cameras
+1. Create empty GameObjects as Child for WorldManager. These will be our cameras. Place them where you want the cmas to be
 1. Now fill in the configuration for the WorldManager and its scripts
   1. ErgManager    
     1. BoatType: This is where your BoatType-Prefab is used
