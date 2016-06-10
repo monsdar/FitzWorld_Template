@@ -1,119 +1,131 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class TrackManager : MonoBehaviour
 {
-    public GameObject partType;
+    public List<GameObject> partTypes;
     public GameObject goalType;
-    public int trackPartsPerGoal = 1;
-    public int maxParts = 20;
+    public int maxFrontParts = 10;
+    public int maxBackParts = 10;
 
+    public int maxGoals = 10;               //TODO: Use this
+    public float distancePerGoal = 100.0f;  //TODO: Use this
+
+    System.Random rndGenerator = new System.Random();
     IList<GameObject> trackparts = new List<GameObject>();
     IList<GameObject> goals = new List<GameObject>();
-
-    //This is called whenever a collision with a track part has happened
-    public void NotifyCollision(int senderId)
-    {
-        //put a new part to the back of the track
-        CreateBackPart();
-        CleanParts(maxParts);
-    }
-    
+        
     public void SetDistance(float distance)
     {
-        Vector3 trackPos = transform.position;
-        trackPos.x = distance - (distance % 100.0f);
-        transform.position = trackPos;
+        //TODO: There are some redundancies in this method... This probably needs some refactoring...
 
-        //this cleans any previously created tracks
-        CleanParts(0);
+        //check how many parts are in front/behind the player
+        int numFrontParts = 0;
+        int numBackParts = 0;
+        getFrontAndBackParts(distance, ref numFrontParts, ref numBackParts);
 
-        //create some track parts on front of the player and some in the back... this will be the track we're working with
-        for (int index = 0; index < maxParts / 2; index++)
+        //Create missing Front- and Backparts
+        for (int index = 0; index < maxFrontParts - numFrontParts; ++index)
         {
-            CreateBackPart();
+            CreateFrontPart(distance);
+            //TODO: Create goals
         }
-        for (int index = 0; index < maxParts / 2; index++)
+        for (int index = 0; index < maxBackParts - numBackParts; ++index)
         {
-            CreateFrontPart();
+            CreateBackPart(distance);
+            //Do not create goals for parts in the back (that doesn't make sense, does it?)
         }
-        CleanParts(maxParts);
-    }
 
-    private void CleanParts(int numMaxParts)
-    {
-        //just maintain a certain number of parts
-        while (trackparts.Count > numMaxParts)
+        //Remove Front- and Backparts if there are more than wanted
+        for (int index = 0; index < numFrontParts - maxFrontParts; ++index)
+        {
+            GameObject lastPart = trackparts.Last();
+            RemoveTrackPart(lastPart);
+        }
+        for (int index = 0; index < numBackParts - maxBackParts; ++index)
         {
             GameObject firstPart = trackparts.FirstOrDefault();
-            trackparts.Remove(firstPart);
-            Destroy(firstPart, 1.0f);
+            RemoveTrackPart(firstPart);
         }
+    }
 
-        //clean up all goals that reach back longer than the track is long
-        if(trackparts.Count > 0)
+    private void getFrontAndBackParts(float distance, ref int numFrontParts, ref int numBackParts)
+    {
+        foreach (GameObject part in trackparts)
         {
-            float trackOrigin = trackparts.FirstOrDefault().transform.position.x;
-            foreach (GameObject goal in goals.Reverse()) //iterate reverse, this enables us to remove during iteration
+            if (part.transform.position.x < distance)
             {
-                if (goal.transform.position.x < trackOrigin)
-                {
-                    goals.Remove(goal);
-                    Destroy(goal, 1.0f);
-                }
+                numBackParts++;
+            }
+            else
+            {
+                numFrontParts++;
             }
         }
     }
 
-    private void CreateBackPart()
+    private void RemoveTrackPart(GameObject part)
     {
-        //start from the object that we're attached on if there's no track yet
-        Transform dockingPoint = transform;
+        trackparts.Remove(part);
+        Destroy(part, 1.0f);
+        //TODO: Clean up Goals
+    }
+
+    private void CreateBackPart(float startDistance)
+    {
+        //This method assumes that there are parts where we can dock on
+        if(trackparts.Count <= 0)
+        {
+            return;
+        }
+        
+        //if there already are some track parts we need to attach to them
+        string frontDockName = "FrontDockingPoint";
+        string backDockName = "BackDockingPoint";
+        
+        GameObject firstPart = trackparts.First();
+        Transform frontDockingPoint = firstPart.GetComponentInChildren<Transform>().Find(frontDockName);
+        Transform backDockingPoint = firstPart.GetComponentInChildren<Transform>().Find(backDockName);
+
+        Transform dockingPoint = this.transform;
+        dockingPoint.position = backDockingPoint.position - (frontDockingPoint.position - backDockingPoint.position);
+
+        //create the new part
+        int randomIndex = rndGenerator.Next(partTypes.Count);
+        GameObject newPart = Instantiate(partTypes[randomIndex], dockingPoint.position, dockingPoint.rotation) as GameObject;
+        trackparts.Insert(0, newPart);
+    }
+
+    private void CreateFrontPart(float startDistance)
+    {
+        //if there's no track yet we need to use the given startdistance for our first trackpart
+        Transform dockingPoint = this.transform;
+        Vector3 newPos = dockingPoint.position;
+        newPos.x = startDistance;
+        dockingPoint.position = newPos;
 
         //if there already are some track parts we need to attach to them
         if (trackparts.Count > 0)
         {
-            string dockName = "BackDockingPoint";
+            string dockName = "FrontDockingPoint";
             GameObject lastPart = trackparts.Last();
             dockingPoint = lastPart.GetComponentInChildren<Transform>().Find(dockName);
         }
 
-        //the new track part needs a reference to the trackmanager
-        GameObject newPart = Instantiate(partType, dockingPoint.position, dockingPoint.rotation) as GameObject;
-        CollNotifierTrackpart collNotifier = newPart.GetComponentInChildren<CollNotifierTrackpart>();
-        collNotifier.trackManager = this;
+        //create the new part
+        int randomIndex = rndGenerator.Next(partTypes.Count);
+        GameObject newPart = Instantiate(partTypes[randomIndex], dockingPoint.position, dockingPoint.rotation) as GameObject;
         trackparts.Add(newPart);
 
-        //check if we need to create a goal too
-        //TODO: Create goals every x meters, not every x parts
-        if(trackparts.Count % trackPartsPerGoal == 0)
-        {
-            if(goalType != null)
-            {
-                goals.Add(Instantiate(goalType, dockingPoint.position, dockingPoint.rotation) as GameObject);
-            }
-        }
-    }
-
-    private void CreateFrontPart()
-    {
-        //start from the object that we're attached on if there's no track yet
-        Transform dockingPoint = transform;
-
-        //if there already are some track parts we need to attach to them
-        string frontDockName = "FrontDockingPoint";
-        string backDockName = "BackDockingPoint";
-
-        GameObject firstPart = trackparts.FirstOrDefault();
-        Transform frontDockingPoint = firstPart.GetComponentInChildren<Transform>().Find(frontDockName);
-        Transform backDockingPoint = firstPart.GetComponentInChildren<Transform>().Find(backDockName);
-        dockingPoint.position = frontDockingPoint.position - (backDockingPoint.position - frontDockingPoint.position);
-
-        //the new track part needs a reference to the trackmanager
-        GameObject newPart = Instantiate(partType, dockingPoint.position, dockingPoint.rotation) as GameObject;
-        CollNotifierTrackpart collNotifier = newPart.GetComponentInChildren<CollNotifierTrackpart>();
-        collNotifier.trackManager = this;
-        trackparts.Insert(0,  newPart);
+        //TODO: check if we need to create a goal too. The following code is old and will not work as expected
+        //if (trackparts.Count % trackPartsPerGoal == 0)
+        //{
+        //    if (goalType != null)
+        //    {
+        //        goals.Add(Instantiate(goalType, dockingPoint.position, dockingPoint.rotation) as GameObject);
+        //    }
+        //}
     }
 }

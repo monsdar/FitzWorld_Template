@@ -85,6 +85,94 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &211326306
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 407688, guid: ad235ac4388cc4b47ae97292c98ff161, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407688, guid: ad235ac4388cc4b47ae97292c98ff161, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407688, guid: ad235ac4388cc4b47ae97292c98ff161, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407688, guid: ad235ac4388cc4b47ae97292c98ff161, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407688, guid: ad235ac4388cc4b47ae97292c98ff161, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407688, guid: ad235ac4388cc4b47ae97292c98ff161, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 407688, guid: ad235ac4388cc4b47ae97292c98ff161, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 407688, guid: ad235ac4388cc4b47ae97292c98ff161, type: 2}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 463866, guid: ad235ac4388cc4b47ae97292c98ff161, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -1.5
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: ad235ac4388cc4b47ae97292c98ff161, type: 2}
+  m_IsPrefabParent: 0
+--- !u!1001 &961427244
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 418028, guid: 4c1ecd70365afa944a52db28dc786ae1, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 418028, guid: 4c1ecd70365afa944a52db28dc786ae1, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 418028, guid: 4c1ecd70365afa944a52db28dc786ae1, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 418028, guid: 4c1ecd70365afa944a52db28dc786ae1, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 418028, guid: 4c1ecd70365afa944a52db28dc786ae1, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 418028, guid: 4c1ecd70365afa944a52db28dc786ae1, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 418028, guid: 4c1ecd70365afa944a52db28dc786ae1, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 418028, guid: 4c1ecd70365afa944a52db28dc786ae1, type: 2}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 4c1ecd70365afa944a52db28dc786ae1, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &982370481
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,6 +199,67 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2013825478}
+  m_RootOrder: 1
+--- !u!1 &985512322
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 985512324}
+  - 108: {fileID: 985512323}
+  m_Layer: 0
+  m_Name: Directional light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!108 &985512323
+Light:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 985512322}
+  m_Enabled: 1
+  serializedVersion: 6
+  m_Type: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 1
+  m_Range: 10
+  m_SpotAngle: 30
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 0
+    m_Resolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_Lightmapping: 4
+  m_BounceIntensity: 1
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+  m_AreaSize: {x: 1, y: 1}
+--- !u!4 &985512324
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 985512322}
+  m_LocalRotation: {x: 0.37799105, y: -0.25111964, z: 0.107301556, w: 0.8846175}
+  m_LocalPosition: {x: 30.33678, y: 32.652996, z: -18.35688}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
   m_RootOrder: 1
 --- !u!1 &1257948255
 GameObject:
@@ -292,10 +441,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 070c96f45da304e40b56654b257f39f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  partType: {fileID: 103850, guid: 4c1ecd70365afa944a52db28dc786ae1, type: 2}
+  partTypes:
+  - {fileID: 103850, guid: 4c1ecd70365afa944a52db28dc786ae1, type: 2}
   goalType: {fileID: 0}
-  trackPartsPerGoal: 1
-  maxParts: 20
+  maxFrontParts: 10
+  maxBackParts: 10
+  maxGoals: 10
+  distancePerGoal: 100
 --- !u!114 &2013825477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -307,7 +459,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b84407aab43435542b889056c307c69f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boatType: {fileID: 103444, guid: ad235ac4388cc4b47ae97292c98ff161, type: 2}
+  playerBoatType: {fileID: 103444, guid: ad235ac4388cc4b47ae97292c98ff161, type: 2}
+  otherBoatType: {fileID: 0}
   numLanes: 5
   playerLaneIndex: 2
   laneDistance: 4
@@ -325,4 +478,4 @@ Transform:
   - {fileID: 1257948256}
   - {fileID: 982370482}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2

@@ -23,7 +23,8 @@ public class ErgManager : MonoBehaviour
     StatDisplayManager statDisplayManager = null;
     CameraManager cameraManager = null;
 
-    public GameObject boatType;
+    public GameObject playerBoatType;
+    public GameObject otherBoatType;
     public int numLanes = 5;
     public int playerLaneIndex = 2;
     public float laneDistance = 4.0f;
@@ -34,6 +35,12 @@ public class ErgManager : MonoBehaviour
         trackManager = GetComponent<TrackManager>();
         statDisplayManager = GetComponent<StatDisplayManager>();
         cameraManager = GetComponent<CameraManager>();
+
+        //if there is no otherBoatType set just use the playerBoatType... if this isn't set either we're screwed anyways...
+        if(otherBoatType == null)
+        {
+            otherBoatType = playerBoatType;
+        }
 
         initLanes();
 
@@ -137,6 +144,12 @@ public class ErgManager : MonoBehaviour
             {
                 statDisplayManager.UpdateStats(givenErg);
             }
+
+            //update all the trackparts
+            if (trackManager != null)
+            {
+                trackManager.SetDistance((float)givenErg.distance);
+            }
         }
     }
 
@@ -154,22 +167,22 @@ public class ErgManager : MonoBehaviour
             newPos = GetFreeBotLane();
         }
 
-        Debug.Log("Created new Boat " + givenErg.ergId);
-        boats[givenErg.ergId] = Instantiate(boatType, newPos, newRot) as GameObject;
-        
-        //if we just created the player boat we need to take care of positioning the camera, creating the track etc
+        //if we just created the player boat we need to attach the camera
         if (givenErg.playertype == EasyErgsocket.PlayerType.HUMAN)
         {
+            boats[givenErg.ergId] = Instantiate(playerBoatType, newPos, newRot) as GameObject;
             if (cameraManager != null)
             {
                 cameraManager.SetParent(boats[givenErg.ergId].transform);
             }
-
-            if(trackManager != null)
-            {
-                trackManager.SetDistance((float)givenErg.distance);
-            }
         }
+        else
+        {
+            boats[givenErg.ergId] = Instantiate(otherBoatType, newPos, newRot) as GameObject;
+        }
+
+
+        Debug.Log("Created new Boat " + givenErg.ergId);
 
         //update the boats name etc
         boats[givenErg.ergId].GetComponent<Boat>().BoatName = givenErg.name;
