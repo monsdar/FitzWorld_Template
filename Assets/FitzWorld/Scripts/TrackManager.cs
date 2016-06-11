@@ -5,6 +5,8 @@ using System;
 
 public class TrackManager : MonoBehaviour
 {
+    //NOTE: This class has no pool of part instances - it seems as if Instantiating and Destroying is more performant than
+    //      using setActive(true/false) or setScale(0.0/1.0) on a pool of instantiated parts... #lolUnity
     public List<GameObject> partTypes;
     public GameObject goalType;
     public int maxFrontParts = 10;
@@ -14,13 +16,13 @@ public class TrackManager : MonoBehaviour
     public float distancePerGoal = 100.0f;  //TODO: Use this
 
     System.Random rndGenerator = new System.Random();
+    int lastRandomIndex = 999;
+
     IList<GameObject> trackparts = new List<GameObject>();
     IList<GameObject> goals = new List<GameObject>();
         
     public void SetDistance(float distance)
     {
-        //TODO: There are some redundancies in this method... This probably needs some refactoring...
-
         //check how many parts are in front/behind the player
         int numFrontParts = 0;
         int numBackParts = 0;
@@ -93,8 +95,7 @@ public class TrackManager : MonoBehaviour
         dockingPoint.position = backDockingPoint.position - (frontDockingPoint.position - backDockingPoint.position);
 
         //create the new part
-        int randomIndex = rndGenerator.Next(partTypes.Count);
-        GameObject newPart = Instantiate(partTypes[randomIndex], dockingPoint.position, dockingPoint.rotation) as GameObject;
+        GameObject newPart = Instantiate(GetRandomPartType(), dockingPoint.position, dockingPoint.rotation) as GameObject;
         trackparts.Insert(0, newPart);
     }
 
@@ -115,8 +116,7 @@ public class TrackManager : MonoBehaviour
         }
 
         //create the new part
-        int randomIndex = rndGenerator.Next(partTypes.Count);
-        GameObject newPart = Instantiate(partTypes[randomIndex], dockingPoint.position, dockingPoint.rotation) as GameObject;
+        GameObject newPart = Instantiate(GetRandomPartType(), dockingPoint.position, dockingPoint.rotation) as GameObject;
         trackparts.Add(newPart);
 
         //TODO: check if we need to create a goal too. The following code is old and will not work as expected
@@ -127,5 +127,17 @@ public class TrackManager : MonoBehaviour
         //        goals.Add(Instantiate(goalType, dockingPoint.position, dockingPoint.rotation) as GameObject);
         //    }
         //}
+    }
+
+    private GameObject GetRandomPartType()
+    {
+        //The while-loop ensures that we do not get the same indeces everytime
+        int randomIndex = lastRandomIndex;
+        while (lastRandomIndex == randomIndex)
+        {
+            randomIndex = rndGenerator.Next(partTypes.Count);
+        }
+        lastRandomIndex = randomIndex;
+        return partTypes[randomIndex];
     }
 }
