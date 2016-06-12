@@ -1,5 +1,6 @@
 # FitzWorld_Template
-This is a Unity template project to allow the easy creation of FitzWorld environments
+This is a Unity template project to allow the easy creation of FitzWorld environments. Here's an example of what is possible:  
+[![Youtube Preview](https://img.youtube.com/vi/iQYRhzglQ44/0.jpg)](https://www.youtube.com/watch?v=iQYRhzglQ44)
 
 ## Steps to do
 1. Open this project in Unity
