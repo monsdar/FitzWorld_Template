@@ -8,19 +8,21 @@ public class TrackManager : MonoBehaviour
     //NOTE: This class has no pool of part instances - it seems as if Instantiating and Destroying is more performant than
     //      using setActive(true/false) or setScale(0.0/1.0) on a pool of instantiated parts... #lolUnity
     public List<GameObject> partTypes;
-    public GameObject goalType;
     public int maxFrontParts = 10;
     public int maxBackParts = 10;
 
-    public int maxGoals = 10;               //TODO: Use this
-    public float distancePerGoal = 100.0f;  //TODO: Use this
+    public GameObject bigGoalType;
+    public GameObject smallGoalType;
+    public float distancePerBigGoal = 100.0f;
+    public float distancePerSmallGoal = 10.0f;
 
     System.Random rndGenerator = new System.Random();
     int lastRandomIndex = 999;
 
-    IList<GameObject> trackparts = new List<GameObject>();
-    IList<GameObject> goals = new List<GameObject>();
-        
+    List<GameObject> trackparts = new List<GameObject>();
+    List<GameObject> bigGoals = new List<GameObject>();
+    List<GameObject> smallGoals = new List<GameObject>();
+
     public void SetDistance(float distance)
     {
         //check how many parts are in front/behind the player
@@ -39,6 +41,10 @@ public class TrackManager : MonoBehaviour
             CreateBackPart(distance);
             //Do not create goals for parts in the back (that doesn't make sense, does it?)
         }
+
+        //create the needed goals
+        CreateGoals(bigGoalType, bigGoals, distancePerBigGoal);
+        CreateGoals(smallGoalType, smallGoals, distancePerSmallGoal);
 
         //Remove Front- and Backparts if there are more than wanted
         for (int index = 0; index < numFrontParts - maxFrontParts; ++index)
@@ -70,9 +76,28 @@ public class TrackManager : MonoBehaviour
 
     private void RemoveTrackPart(GameObject part)
     {
+        //clean up any goals behind the destroyed trackpart
+        foreach (GameObject goal in bigGoals)
+        {
+            if (goal.transform.position.x <= part.transform.position.x)
+            {
+                Destroy(goal, 1.0f);
+            }
+        }
+        foreach (GameObject goal in smallGoals)
+        {
+            if (goal.transform.position.x <= part.transform.position.x)
+            {
+                Destroy(goal, 1.0f);
+            }
+        }
+        bigGoals.RemoveAll(item => (item.transform.position.x <= part.transform.position.x));
+        smallGoals.RemoveAll(item => (item.transform.position.x <= part.transform.position.x));
+
+        //destroy the trackpart itself
         trackparts.Remove(part);
         Destroy(part, 1.0f);
-        //TODO: Clean up Goals
+
     }
 
     private void CreateBackPart(float startDistance)
@@ -99,12 +124,12 @@ public class TrackManager : MonoBehaviour
         trackparts.Insert(0, newPart);
     }
 
-    private void CreateFrontPart(float startDistance)
+    private void CreateFrontPart(float givenDistance)
     {
         //if there's no track yet we need to use the given startdistance for our first trackpart
         Transform dockingPoint = this.transform;
         Vector3 newPos = dockingPoint.position;
-        newPos.x = startDistance;
+        newPos.x = givenDistance;
         dockingPoint.position = newPos;
 
         //if there already are some track parts we need to attach to them
@@ -118,15 +143,42 @@ public class TrackManager : MonoBehaviour
         //create the new part
         GameObject newPart = Instantiate(GetRandomPartType(), dockingPoint.position, dockingPoint.rotation) as GameObject;
         trackparts.Add(newPart);
+    }
 
-        //TODO: check if we need to create a goal too. The following code is old and will not work as expected
-        //if (trackparts.Count % trackPartsPerGoal == 0)
-        //{
-        //    if (goalType != null)
-        //    {
-        //        goals.Add(Instantiate(goalType, dockingPoint.position, dockingPoint.rotation) as GameObject);
-        //    }
-        //}
+    private void CreateGoals(GameObject goalType, List<GameObject> goalList, float distancePerGoal)
+    {
+        if (goalType == null)
+        {
+            return;
+        }
+        
+        //do nothing if there is no track yet
+        if(trackparts.Count == 0)
+        {
+            return;
+        }
+
+        //if there is no goal yet try to create them from the first trackpart on... just go from the last known goal if there already are goals
+        float lastGoalDistance = trackparts.First().transform.position.x;
+        if (goalList.Count > 0)
+        {
+            lastGoalDistance = goalList.Last().transform.position.x;
+        }
+
+        //check the distance of the last created trackpart, create goals between the last goal and the last trackpart
+        float lastTrackDistance = trackparts.Last().transform.position.x;
+        while(lastGoalDistance < lastTrackDistance)
+        {
+            float nextDistance = lastGoalDistance + distancePerGoal;
+
+            Transform dockingPoint = this.transform;
+            Vector3 goalPosition = dockingPoint.position;
+            goalPosition.x = nextDistance;
+            dockingPoint.position = goalPosition;
+
+            goalList.Add(Instantiate(goalType, dockingPoint.position, dockingPoint.rotation) as GameObject);
+            lastGoalDistance = goalList.Last().transform.position.x;
+        }
     }
 
     private GameObject GetRandomPartType()
